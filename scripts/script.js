@@ -34,7 +34,7 @@ function preload(){
 
 function create(){
     backgroundSand = this.add.tileSprite(450,200, 900,1630, 'backgroundSand')
-    player = this.physics.add.image(450,500,'hero').setScale(5);
+    player = this.physics.add.sprite(450,500,'hero').setScale(5);
     player.setCollideWorldBounds(true);
     cursors = this.input.keyboard.createCursorKeys()
     this.anims.create({
@@ -61,17 +61,15 @@ function create(){
 function update(){
     backgroundSand.tilePositionY -= 0.5;
     if (cursors.left.isDown){
-        player.setVelocityX(-160);
-        player.anims.play('left', true)
+        player.setVelocityX(-80);
+
     }else if(cursors.right.isDown){
-        player.setVelocityX(160);
-        player.anims.play('right', true)
+        player.setVelocityX(80);
+
     }else{
-        player.setVelocityX(0)
-        player.anims.play('turn');
+        player.setVelocityY(60)
     }
-    if (cursors.up.isDown && player.body.touching.down)
-    {
+    if (cursors.up.isDown ){
         player.setVelocityY(-330)
     }
 
