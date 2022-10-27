@@ -37,40 +37,21 @@ function create(){
     player = this.physics.add.sprite(450,500,'hero').setScale(5);
     player.setCollideWorldBounds(true);
     cursors = this.input.keyboard.createCursorKeys()
-    this.anims.create({
-        key: 'left',
-        frames: this.anims.generateFrameNumbers('hero', {start: 0, end: 3}),
-        frameRate: 10,
-        repeat: -1,
-    });
-    
-    this.anims.create({
-        key: 'turn',
-        frames: [{key : 'hero', frame : 4}],
-        frameRate: 20,
-    });
-    
-    this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('hero', {start: 5, end: 8}),
-        frameRate: 10,
-        repeat: -1
-    });
-}
 
 function update(){
     backgroundSand.tilePositionY -= 0.5;
+    player.setVelocityX(0);
     if (cursors.left.isDown){
-        player.setVelocityX(-80);
+        player.setVelocityX(-90);
 
     }else if(cursors.right.isDown){
-        player.setVelocityX(80);
+        player.setVelocityX(90);
 
     }else{
         player.setVelocityY(60)
     }
     if (cursors.up.isDown ){
-        player.setVelocityY(-330)
+        player.setVelocityY(-90)
     }
 
 }
