@@ -31,6 +31,7 @@ function preload(){
     this.load.image("backgroundSand", "/img/sable.png")
     this.load.spritesheet('hero','/img/hero.png',{frameWidth: 21, frameHeight : 25})
     this.load.spritesheet('flame', '/img/flame.png',{frameWidth: 126, frameHeight: 128})
+    this.load.image('bush', '/img/bush.png')
 }
 
 
@@ -38,15 +39,24 @@ function preload(){
 function create(){
     backgroundSand = this.add.tileSprite(450,200, 900,1630, 'backgroundSand')
     player = this.physics.add.sprite(450,350,'hero').setScale(5);
-    //player.frame = 3;
     player.setCollideWorldBounds(true);
+    bushes = this.physics.add.group();
     cursors = this.input.keyboard.createCursorKeys()
-
+    
     flames = this.physics.add.group({
         key:'flame',
         repeat:10,
         setXY: {x:50,y:536,stepX:80}
     })
+    
+    
+    this.physics.add.collider(player, bushes, touchBush, null, this);
+    function touchBush(player){
+       
+    }
+
+    var bush = bushes.create(300,0, 'bush').setScale(0.5);
+    bush.setVelocityY(30);
 
     this.anims.create({
         key: 'left',
@@ -81,6 +91,7 @@ function create(){
         repeat: true,
 
     })
+
 }
 
 
@@ -88,6 +99,7 @@ function create(){
 function update(){
     backgroundSand.tilePositionY -= 0.5;
     player.setVelocityX(0);
+   // bushes.setVelocityY(30);
     if (cursors.left.isDown){
         player.setVelocityX(-90);
         player.anims.play('left', true)
@@ -110,5 +122,5 @@ function update(){
     flames.children.iterate(function(child){
         child.anims.play('burn', true)
     })
-
+    // addBush()
 }
