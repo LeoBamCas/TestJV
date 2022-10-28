@@ -30,6 +30,7 @@ function init(){
 function preload(){
     this.load.image("backgroundSand", "/img/sable.png")
     this.load.spritesheet('hero','/img/hero.png',{frameWidth: 21, frameHeight : 25})
+    this.load.spritesheet('flame', '/img/flame.png',{frameWidth: 126, frameHeight: 128})
 }
 
 
@@ -40,6 +41,12 @@ function create(){
     //player.frame = 3;
     player.setCollideWorldBounds(true);
     cursors = this.input.keyboard.createCursorKeys()
+
+    flames = this.physics.add.group({
+        key:'flame',
+        repeat:10,
+        setXY: {x:50,y:536,stepX:80}
+    })
 
     this.anims.create({
         key: 'left',
@@ -65,6 +72,14 @@ function create(){
         key: 'still',
         frames: [{key : 'hero', frame: 8}],
         frameRate: 20
+    })
+
+    this.anims.create({
+        key: "burn",
+        frames: this.anims.generateFrameNumbers('flame', {start:0, end:32}),
+        frameRate : 15,
+        repeat: true,
+
     })
 }
 
@@ -92,5 +107,8 @@ function update(){
         player.setVelocityY(30)
         player.anims.play('still', true)
     }
+    flames.children.iterate(function(child){
+        child.anims.play('burn', true)
+    })
 
 }
