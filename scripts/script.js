@@ -29,7 +29,7 @@ function init(){
 
 function preload(){
     this.load.image("backgroundSand", "/img/sable.png")
-    this.load.spritesheet('hero','/img/hero.png',{frameWidth: 21, frameHeight : 25})
+    this.load.spritesheet('hero','/img/adventurer.png',{frameWidth: 44, frameHeight : 58})
     this.load.spritesheet('flame', '/img/flame.png',{frameWidth: 126, frameHeight: 128})
     this.load.image('bush', '/img/bush.png')
 }
@@ -38,7 +38,7 @@ function preload(){
 
 function create(){
     backgroundSand = this.add.tileSprite(450,200, 900,1630, 'backgroundSand')
-    player = this.physics.add.sprite(450,350,'hero').setScale(4);
+    player = this.physics.add.sprite(450,350,'hero').setScale(1);
     player.setCollideWorldBounds(true);
     bushes = this.physics.add.group();
     cursors = this.input.keyboard.createCursorKeys()
@@ -58,27 +58,27 @@ function create(){
 
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('hero', {start: 4, end: 5}),
+        frames: this.anims.generateFrameNumbers('hero', {start:5, end: 7}),
         frameRate: 10,
     })
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('hero', {start: 2, end: 3}),
+        frames: this.anims.generateFrameNumbers('hero', {start: 10, end: 12}),
         frameRate: 10
     })
     this.anims.create({
         key: 'up',
-        frames: this.anims.generateFrameNumbers('hero', {start : 6, end: 7}),
+        frames: this.anims.generateFrameNumbers('hero', {start : 15, end: 17}),
         frameRate: 15
     })
     this.anims.create({
         key: 'down',
-        frames: this.anims.generateFrameNumbers('hero', {start : 0, end: 1}),
+        frames: this.anims.generateFrameNumbers('hero', {start : 0, end: 2}),
         frameRate: 10
     })
     this.anims.create({
         key: 'still',
-        frames: [{key : 'hero', frame: 8}],
+        frames: [{key : 'hero', frame: 16}],
         frameRate: 20
     })
 
@@ -93,7 +93,7 @@ function create(){
     function getFried(){
         player.setTint(0xff0000);
         this.physics.pause()
-        player.anims.play('burn')
+        player.anims.play('burn', true)
         gameOver = true;
 
     }
