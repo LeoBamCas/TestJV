@@ -34,6 +34,7 @@ function preload(){
     this.load.image('bush', '/img/bush.png')
     this.load.image('bone', '/img/bone.png')
     this.load.image('spaceship', '/img/ufo.png')
+    this.load.audio('dirt', '/sound/dirt.mp3')
 }
 
 
@@ -44,6 +45,8 @@ function create(){
     player.setCollideWorldBounds(true);
     bushes = this.physics.add.group();
     ufo = this.physics.add.image(450,-100,'spaceship').setScale(0.5)
+
+    this.dirtSound = this.sound.add('dirt')
    
     bones = this.physics.add.group();
     cursors = this.input.keyboard.createCursorKeys()
@@ -100,6 +103,7 @@ function create(){
     function getBones(player, bone){
         bone.disableBody(true, true)
         score +=1
+        this.dirtSound.play()
     }
     
 }
@@ -107,26 +111,30 @@ function create(){
 
 
 function update(){
-    backgroundSand.tilePositionY -= 0.5;
-    player.setVelocityX(0);
-    if (cursors.left.isDown){
-        player.setVelocityX(-90);
-        player.anims.play('left', true)
-        
-    }else if(cursors.right.isDown){
-        player.setVelocityX(90);
-        player.anims.play('right', true)
-        
-    } else if (cursors.up.isDown ){
-        player.setVelocityY(-90)
-        player.anims.play('up', true)
-    }else if(cursors.down.isDown){
-        player.setVelocityY(120)
-            player.anims.play('down', true)
-        }
-        else{
-            player.setVelocityY(30)
-            player.anims.play('still', true)
+
+    if(gameOver === false){
+
+        backgroundSand.tilePositionY -= 0.5;
+        player.setVelocityX(0);
+        if (cursors.left.isDown){
+            player.setVelocityX(-90);
+            player.anims.play('left', true)
+            
+        }else if(cursors.right.isDown){
+            player.setVelocityX(90);
+            player.anims.play('right', true)
+            
+        } else if (cursors.up.isDown ){
+            player.setVelocityY(-90)
+            player.anims.play('up', true)
+        }else if(cursors.down.isDown){
+            player.setVelocityY(120)
+                player.anims.play('down', true)
+            }
+            else{
+                player.setVelocityY(30)
+                player.anims.play('still', true)
+            }
         }
         flames.children.iterate(function(child){
             child.anims.play('burn', true)
@@ -173,7 +181,6 @@ function update(){
     function flyAway(){
         player.setTint(0x71e842);
     this.physics.pause()
-    player.anims.play('burn', true)
     gameOver = true;
 
 }
