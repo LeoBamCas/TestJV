@@ -38,25 +38,23 @@ function preload(){
 
 function create(){
     backgroundSand = this.add.tileSprite(450,200, 900,1630, 'backgroundSand')
-    player = this.physics.add.sprite(450,350,'hero').setScale(5);
+    player = this.physics.add.sprite(450,350,'hero').setScale(4);
     player.setCollideWorldBounds(true);
     bushes = this.physics.add.group();
     cursors = this.input.keyboard.createCursorKeys()
     
-    flames = this.physics.add.group({
+    flames = this.physics.add.staticGroup({
         key:'flame',
         repeat:10,
         setXY: {x:50,y:536,stepX:80}
     })
     
     
-    this.physics.add.collider(player, bushes, touchBush, null, this);
-    function touchBush(player){
-       
-    }
+    this.physics.add.collider(bushes,player);
+    this.physics.add.collider(flames, player, getFried, null, this)
 
-    var bush = bushes.create(300,0, 'bush').setScale(0.5);
-    bush.setVelocityY(30);
+
+   
 
     this.anims.create({
         key: 'left',
@@ -92,6 +90,16 @@ function create(){
 
     })
 
+    function getFried(){
+        player.setTint(0xff0000);
+        this.physics.pause()
+        player.anims.play('burn')
+        gameOver = true;
+
+    }
+
+    timedEvent = this.time.delayedCall(5000, onEvent,[],this)
+
 }
 
 
@@ -122,5 +130,12 @@ function update(){
     flames.children.iterate(function(child){
         child.anims.play('burn', true)
     })
-    // addBush()
+
+}
+
+function onEvent(){
+    var bush = bushes.create(Math.floor(Math.random()*900),0, 'bush').setScale(0.5);
+    bush.setVelocityY(30);
+    bush.setPushable(false);
+    timedEvent = this.time.delayedCall(7000, onEvent,[],this)
 }
