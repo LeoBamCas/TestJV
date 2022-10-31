@@ -33,27 +33,21 @@ function preload(){
     this.load.spritesheet('flame', '/img/flame.png',{frameWidth: 126, frameHeight: 128})
     this.load.image('bush', '/img/bush.png')
     this.load.image('bone', '/img/bone.png')
+    this.load.image('spaceship', '/img/ufo.png')
 }
 
 
-
+let score = 0;
 function create(){
     backgroundSand = this.add.tileSprite(450,200, 900,1630, 'backgroundSand')
     player = this.physics.add.sprite(450,350,'hero').setScale(1);
     player.setCollideWorldBounds(true);
     bushes = this.physics.add.group();
-    bones = this.physics.add.group({
-        key: 'bone'
-    });
+   
+    bones = this.physics.add.group();
     cursors = this.input.keyboard.createCursorKeys()
     gameOver = false;
 
-    
-
-   
-
-
-   
 
     this.anims.create({
         key: 'left',
@@ -80,17 +74,17 @@ function create(){
         frames: [{key : 'hero', frame: 16}],
         frameRate: 20
     })
-
+    
     this.anims.create({
         key: "burn",
         frames: this.anims.generateFrameNumbers('flame', {start:0, end:32}),
         frameRate : 15,
         repeat: true,
-
+        
     })
-
-
-
+    
+    
+    
     timedEvent = this.time.delayedCall(6000, onEvent,[],this)
     timedEvent = this.time.delayedCall(3000, setBone, [], this)
     flames = this.physics.add.staticGroup({
@@ -100,8 +94,17 @@ function create(){
     })
     this.physics.add.collider(bushes,player);
     this.physics.add.collider(flames, player, getFried, null, this)
-    // this.physics.add.collider(bones, player, getBones, null, this)
-
+    this.physics.add.overlap(bones, player, getBones, null, this)
+    
+    function getBones(player, bone){
+        bone.disableBody(true, true)
+        score +=1
+    }
+    
+    if (score >= 3){
+        timedEvent = this.time.delayedCall(3000, setUfo, [], this)
+        this.physics.add.collider(ufo, player, flyAway, null, this)
+    }
 }
 
 
@@ -109,7 +112,6 @@ function create(){
 function update(){
     backgroundSand.tilePositionY -= 0.5;
     player.setVelocityX(0);
-   // bushes.setVelocityY(30);
     if (cursors.left.isDown){
         player.setVelocityX(-90);
         player.anims.play('left', true)
@@ -136,7 +138,7 @@ function update(){
 }
 
 function onEvent(){
-    if(gameOver === false){
+    if(gameOver === false && score < 15){
     var bush = bushes.create(Math.floor(Math.random()*900),0, 'bush').setScale(0.5);
     bush.setVelocityY(30);
     bush.setPushable(false);
@@ -145,7 +147,7 @@ function onEvent(){
     }
 }
 function setBone(){
-    if(gameOver === false){
+    if(gameOver === false && score<15){
         var bone = bones.create(Math.floor(Math.random()*900),0, 'bone').setScale(0.5);
         bone.setVelocityY(30);
         bone.setPushable(false);
@@ -159,9 +161,18 @@ function getFried(){
     this.physics.pause()
     player.anims.play('burn', true)
     gameOver = true;
-    console.log(gameOver);
 
 }
-// function getBones(){
-//     bone.disableBody()
-// }
+
+function setUfo(){
+    ufo = this.physics.add.image(450,0,'spaceship')
+    ufo.setVelocityY(30)
+}
+
+function flyAway(){
+    player.setTint(0x71e842);
+    this.physics.pause()
+    player.anims.play('burn', true)
+    gameOver = true;
+
+}
