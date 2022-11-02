@@ -33,6 +33,8 @@ function preload(){
     this.load.spritesheet('flame', '/img/flame.png',{frameWidth: 126, frameHeight: 128})
     this.load.image('bush', '/img/bush.png')
     this.load.image('bone', '/img/bone.png')
+    this.load.image('bone2', '/img/bone2.png')
+    this.load.image('bone3', '/img/bone3.png')
     this.load.image('spaceship', '/img/ufo.png')
     this.load.audio('dirt', '/sound/dirt.mp3')
 }
@@ -86,7 +88,16 @@ function create(){
         repeat: true,
         
     })
-    
+    this.anims.create({
+        key: 'jump',
+        frames: [{key : 'hero', frame: 16}],
+        frameRate: 20,
+    })
+    this.anims.create({
+        key: 'boneRotate',
+        frames: [{key : 'bone'},{key: 'bone2'}, {key: 'bone3'}],
+        frameRate: 10,
+    })
     
     
     timedEvent = this.time.delayedCall(6000, onEvent,[],this)
@@ -114,14 +125,14 @@ function update(){
 
     if(gameOver === false){
 
-        backgroundSand.tilePositionY -= 0.5;
+        backgroundSand.tilePositionY -= 1;
         player.setVelocityX(0);
         if (cursors.left.isDown){
-            player.setVelocityX(-90);
+            player.setVelocityX(-100);
             player.anims.play('left', true)
             
         }else if(cursors.right.isDown){
-            player.setVelocityX(90);
+            player.setVelocityX(100);
             player.anims.play('right', true)
             
         } else if (cursors.up.isDown ){
@@ -130,14 +141,26 @@ function update(){
         }else if(cursors.down.isDown){
             player.setVelocityY(120)
                 player.anims.play('down', true)
-            }
-            else{
-                player.setVelocityY(30)
-                player.anims.play('still', true)
-            }
         }
+        else{
+                player.setVelocityY(60)
+                player.anims.play('still', true)
+        }
+
+        if(cursors.space.isDown){
+            player.setScale(2);
+            
+        }else if (cursors.space.isUp){
+            player.setScale(1)
+            
+        }
+    }
+        
         flames.children.iterate(function(child){
             child.anims.play('burn', true)
+        })
+        bones.children.iterate(function(child){
+            child.anims.play('boneRotate', true)
         })
         if (score >= 15){
             timedEvent = this.time.delayedCall(3000, setUfo, [], this)
@@ -149,7 +172,7 @@ function update(){
     function onEvent(){
         if(gameOver === false && score < 15){
             var bush = bushes.create(Math.floor(Math.random()*900),-50, 'bush').setScale(0.5);
-            bush.setVelocityY(30);
+            bush.setVelocityY(60);
             bush.setPushable(false);
             
             timedEvent = this.time.delayedCall(6000, onEvent,[],this)
@@ -158,7 +181,7 @@ function update(){
     function setBone(){
         if(gameOver === false && score<15){
             var bone = bones.create(Math.floor(Math.random()*900),-50, 'bone').setScale(0.5);
-            bone.setVelocityY(30);
+            bone.setVelocityY(60);
             bone.setPushable(false);
             
             timedEvent = this.time.delayedCall(6000, setBone,[],this)
@@ -175,7 +198,7 @@ function update(){
     
     function setUfo(){
         
-        ufo.setVelocityY(30)
+        ufo.setVelocityY(60)
     }
     
     function flyAway(){
