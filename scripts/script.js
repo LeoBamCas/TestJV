@@ -29,26 +29,30 @@ function init(){
 
 function preload(){
     this.load.image("backgroundSand", "/img/sable.png")
-    this.load.spritesheet('hero','/img/adventurer.png',{frameWidth: 44, frameHeight : 58})
+    this.load.spritesheet('hero','/img/barbarian.png',{frameWidth: 100, frameHeight : 100})
     this.load.spritesheet('flame', '/img/flame.png',{frameWidth: 126, frameHeight: 128})
     this.load.image('bush', '/img/bush.png')
     this.load.image('bone', '/img/bone.png')
     this.load.image('bone2', '/img/bone2.png')
     this.load.image('bone3', '/img/bone3.png')
+    this.load.image('platform', '/img/platform.png')
     this.load.image('spaceship', '/img/ufo.png')
     this.load.audio('dirt', '/sound/dirt.mp3')
+    this.load.audio('fire', '/sound/fire.mp3')
 }
 
 
 let score = 0;
 function create(){
     backgroundSand = this.add.tileSprite(450,200, 900,1630, 'backgroundSand')
-    player = this.physics.add.sprite(450,350,'hero').setScale(1);
+    player = this.physics.add.sprite(450,300,'hero').setScale(1);
     player.setCollideWorldBounds(true);
     bushes = this.physics.add.group();
+    platform = this.physics.add.sprite(450,550,'platform')
     ufo = this.physics.add.image(450,-100,'spaceship').setScale(0.5)
 
     this.dirtSound = this.sound.add('dirt')
+    this.fireSound = this.sound.add('fire')
    
     bones = this.physics.add.group();
     cursors = this.input.keyboard.createCursorKeys()
@@ -57,27 +61,27 @@ function create(){
 
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('hero', {start:5, end: 7}),
+        frames: this.anims.generateFrameNumbers('hero', {start:4, end: 7}),
         frameRate: 10,
     })
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('hero', {start: 10, end: 12}),
+        frames: this.anims.generateFrameNumbers('hero', {start: 0, end: 3}),
         frameRate: 10
     })
     this.anims.create({
         key: 'up',
-        frames: this.anims.generateFrameNumbers('hero', {start : 15, end: 17}),
+        frames: this.anims.generateFrameNumbers('hero', {start : 12, end: 15}),
         frameRate: 15
     })
     this.anims.create({
         key: 'down',
-        frames: this.anims.generateFrameNumbers('hero', {start : 0, end: 2}),
+        frames: this.anims.generateFrameNumbers('hero', {start : 8, end: 11}),
         frameRate: 10
     })
     this.anims.create({
         key: 'still',
-        frames: [{key : 'hero', frame: 16}],
+        frames: [{key : 'hero', frame: 0}],
         frameRate: 20
     })
     
@@ -88,11 +92,7 @@ function create(){
         repeat: true,
         
     })
-    this.anims.create({
-        key: 'jump',
-        frames: [{key : 'hero', frame: 16}],
-        frameRate: 20,
-    })
+
     this.anims.create({
         key: 'boneRotate',
         frames: [{key : 'bone'},{key: 'bone2'}, {key: 'bone3'}],
@@ -108,8 +108,10 @@ function create(){
         setXY: {x:50,y:536,stepX:80}
     })
     this.physics.add.collider(bushes,player);
-    this.physics.add.collider(flames, player, getFried, null, this)
+    this.physics.add.collider(platform, player, getFriedP, null, this)
     this.physics.add.overlap(bones, player, getBones, null, this)
+    this.physics.add.overlap(platform, [bushes,bones], getFried, null, this)
+
     
     function getBones(player, bone){
         bone.disableBody(true, true)
@@ -148,7 +150,7 @@ function update(){
         }
 
         if(cursors.space.isDown){
-            player.setScale(2);
+            player.setScale(1.5);
             
         }else if (cursors.space.isUp){
             player.setScale(1)
@@ -188,13 +190,19 @@ function update(){
         }
     }
     
-    function getFried(){
+    function getFriedP(){
+        this.fireSound.play() 
         player.setTint(0xff0000);
-        this.physics.pause()
         player.anims.play('burn', true)
-        gameOver = true;
-        
+            this.physics.pause()
+            gameOver = true;         
     }
+    function getFried(flames, object){
+        this.fireSound.play()
+        object.anims.play('burn', true)      
+        object.setTint(0xff0000);
+    }
+
     
     function setUfo(){
         
